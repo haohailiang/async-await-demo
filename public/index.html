@@ -13,6 +13,7 @@
 	<div style="height:50px">
 		<input type="text" placeholder="请输入电话号码" v-model="phoneNum">
 		<button @click="getFaceResult">确定</button>
+		<button @click="getFaceResult2">async-await</button>
 	</div>
 
 	<!-- 充值面值 显示区域 -->
@@ -67,6 +68,25 @@ new Vue({
 				.catch(err => {
 					console.log(err)
 				})
+		},
+		// async标示开始使用这个方法了
+		async getFaceResult2 () {
+			try {
+				let location = await this.getLocation(this.phoneNum)
+				console.log( location );
+				if (location.status === 200 && location.data.success) {
+					let province = location.data.obj.province;
+					let city     = location.data.obj.city;
+
+					let result   = await this.getFaceList(province, city);
+					console.log( result );
+					if (result.status === 200 && result.data.success) {
+						this.faceList = result.data.obj;
+					}
+				}
+			} catch(err) {
+				console.log(err);
+			}
 		}
 	}
 })
